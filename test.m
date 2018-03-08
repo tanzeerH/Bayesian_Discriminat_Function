@@ -54,7 +54,16 @@ data = [-5.01 -8.12 -3.68 1;
    s3= cov(class3_data(:,1:3));
    sigmas = vertcat(s1,s2,s3);
    priors=[.5 .5 0];
-  class= classify(x, means, sigmas,priors,3)
+  count =0;
+  for i=1:n
+    x=data(i:i,1:3);
+    class= classify(x', means, sigmas,priors,3);
+    fprintf('classified as: %d , original %d\n',class,data(i:i,4:4));
+    if class == data(i:i,4:4) 
+        count=count+1;
+    end
+  end
+  fprintf("total correct %d\n",count);
   
 
 function g = discriminant(p,mu,sigma,prior)
@@ -87,16 +96,16 @@ x= vertcat(point1,point2);
 end
 function class = classify(point,means,sigmas,priors,features)
     point=point';
-    point = point(:,1:features)
+    point = point(:,1:features);
     point=point';
     %means=means(1:,2:2)
     max= -100000;
     class=0;   
     for i = 1:3
         s=sigmas((i-1)*3+1:(i-1)*3+features,1:features);
-        m=means(i:i,1:features)
+        m=means(i:i,1:features);
         m=m';
-        x= mahalonobis(point,m,s)
+        x= mahalonobis(point,m,s);
       d = discriminant(point,m,s,priors(:,i));
       if d >max
           max=d;

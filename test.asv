@@ -48,13 +48,16 @@ data = [-5.01 -8.12 -3.68 1;
    m2=mean(class2_data);
    m3=mean(class3_data);
    means = vertcat(m1,m2,m3);
-   means = means(:,1:3)
+   means = means(:,1:3);
    s1= cov(class1_data(:,1:3));
    s2= cov(class2_data(:,1:3));
    s3= cov(class3_data(:,1:3));
    sigmas = vertcat(s1,s2,s3);
    priors=[.5 .5 0];
-  class= classify(x, means, sigmas,priors,3)
+  for i=1:n
+    class= classify(data(i:i,1:3), means, sigmas,priors,3);
+    fprintf('classified as: %d , original %d\n',class,data(i:i,4:4));
+  end
   
 
 function g = discriminant(p,mu,sigma,prior)
@@ -93,9 +96,11 @@ function class = classify(point,means,sigmas,priors,features)
     max= -100000;
     class=0;   
     for i = 1:3
-        s=sigmas((i-1)*3+1:(i-1)*3+features,1:features)
-        
-      d = discriminant(point,means(i:i,1:features),s,priors(:,i));
+        s=sigmas((i-1)*3+1:(i-1)*3+features,1:features);
+        m=means(i:i,1:features);
+        m=m';
+        x= mahalonobis(point,m,s);
+      d = discriminant(point,m,s,priors(:,i));
       if d >max
           max=d;
           class=i;
