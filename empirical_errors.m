@@ -1,6 +1,6 @@
 
 x=[5; 3; 2];
-d= size(x,1);
+%d= size(x,1);
 mu=[1;2;2];
 sigma=[1 0 0; 0 5 2; 0 2 5];
 y = mahalonobis(x,mu,sigma)
@@ -37,7 +37,7 @@ data = [-5.01 -8.12 -3.68 1;
        0.77 0.27 2.41 3;
        0.90 -0.43 -8.71 3;
        3.52 -0.36 6.43 3];
-   [n,m] = size(data);
+  % [n,m] = size(data);
     means = mean(data(:,1:3))
    %sigmas = cov(data(:,1:3));
    %y = mahalonobis(x,means', sigmas)
@@ -54,16 +54,56 @@ data = [-5.01 -8.12 -3.68 1;
    s3= cov(class3_data(:,1:3));
    sigmas = vertcat(s1,s2,s3);
    priors=[.5 .5 0];
+ 
+  %generating random normal instances 1
+  fprintf("generating random dinatnces for class 1");
+  size=10;
   count =0;
-  for i=1:n
-    x=data(i:i,1:3);
-    class= classify(x', means, sigmas,priors,3);
-    fprintf('classified as: %d , original %d\n',class,data(i:i,4:4));
-    if class == data(i:i,4:4) 
+  m1=m1(:,1:3)
+  sample= generateNormalRandomNumbers(m1',s1,10);
+  features=3;
+  for i=1: size
+    x=sample(i:i,1:3);
+    class= classify(x', means, sigmas,priors,features);
+    fprintf('classified as: %d , original 1\n',class);
+    if class == 1 
         count=count+1;
     end
   end
-  fprintf("total correct %d\n",count);
+  fprintf("total correct %d out of %d\n",count,size);
+  
+   fprintf("\n\ngenerating random dinatnces for class 2");
+  size=10;
+  count =0;
+  m2=m2(:,1:3)
+  sample= generateNormalRandomNumbers(m2',s2,10);
+  features=3;
+  for i=1: size
+    x=sample(i:i,1:3);
+    class= classify(x', means, sigmas,priors,features);
+    fprintf('classified as: %d , original 2\n',class);
+    if class == 2 
+        count=count+1;
+    end
+  end
+  fprintf("total correct %d out of %d\n",count,size);
+  
+  
+   fprintf("generating random dinatnces for class 3");
+  size=10;
+  count =0;
+  m3 = m3(:,1:3)
+  sample= generateNormalRandomNumbers(m3',s3,10);
+  features=3;
+  for i=1: size
+    x=sample(i:i,1:3);
+    class= classify(x', means, sigmas,priors,features);
+    fprintf('classified as: %d , original 3\n',class);
+    if class == 3 
+        count=count+1;
+    end
+  end
+  fprintf("total correct %d out of %d\n",count,size);
   
 
 function g = discriminant(p,mu,sigma,prior)
